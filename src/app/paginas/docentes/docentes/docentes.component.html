@@ -1,0 +1,123 @@
+
+<div class="container-fluid">
+  <br>
+  <div class="row">
+    <app-menu-principal></app-menu-principal>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-3">
+
+    </div>
+    <div class="col-sm-6">
+      <h1>
+        Cantidad de docentes
+      </h1>
+    </div>
+    <div class="col-sm-3">
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+
+
+
+    </div>
+    <div class="col-sm-4">
+
+      <form action="" [formGroup]="formulario" (ngSubmit)="onSubmit()">
+        <br>
+        <br>
+        <label>Facultad</label>
+        <br>
+        <p-dropdown [options]="facultadArray" optionLabel="label" name="FACULTAD" formControlName="FACULTAD"
+          placeholder="Selecciona la facultad" [style]="{'minWidth':'100%'}" (onChange)="facultadSelect($event)">
+        </p-dropdown>
+        <br>
+        <br>
+
+
+        <label>Unidad</label>
+        <br>
+        <p-dropdown [options]="unidadArray" optionLabel="label" name="UNIDAD" formControlName="UNIDAD"
+          placeholder="Selecciona la unidad " [style]="{'minWidth':'100%'}"></p-dropdown>
+        <br>
+        <br>
+
+        <label>Edad</label>
+        <br>
+        <p-dropdown [options]="edadArray" optionLabel="label" name="CAT_EDAD" formControlName="CAT_EDAD"
+          placeholder="Selecciona la edad " [style]="{'minWidth':'100%'}"></p-dropdown>
+        <br>
+        <br>
+
+        <label>Sexo</label>
+        <br>
+        <p-dropdown [options]="sexoArray" optionLabel="label" name="SEXO" formControlName="SEXO"
+          placeholder="Selecciona el sexo " [style]="{'minWidth':'100%'}"></p-dropdown>
+        <br>
+        <br>
+
+
+        <label>Servicio</label>
+        <br>
+        <p-dropdown [options]="servicioArray" optionLabel="label" name="CAT_SERVICIO" formControlName="CAT_SERVICIO"
+          placeholder="Selecciona el servicio " [style]="{'minWidth':'100%'}"></p-dropdown>
+        <br>
+        <br>
+
+        <label>Categoría</label>
+        <br>
+        <p-dropdown [options]="categoriaArray" optionLabel="label" name="CATEGORIA" formControlName="CATEGORIA"
+          placeholder="Selecciona la categoria" [style]="{'minWidth':'100%'}"></p-dropdown>
+        <br>
+        <br>
+        <label>Dedicación</label>
+        <br>
+        <p-dropdown [options]="dedicacionArray" optionLabel="label" name="DEDICACION" formControlName="DEDICACION"
+          placeholder="Selecciona la dedicación" [style]="{'minWidth':'100%'}"></p-dropdown>
+        <br>
+        <br>
+        <label>Formación</label>
+        <br>
+        <p-dropdown [options]="formacionArray" optionLabel="label" name="FORMACION" formControlName="FORMACION"
+          placeholder="Selecciona la formación" [style]="{'minWidth':'100%'}"></p-dropdown>
+        <br>
+        <br>
+        <hr />
+        <br>
+        <div class="text-center">
+          <button class="btn btn-primary" pButton pRipple label="Guardar" type="submit"
+            [disabled]="!formulario.valid">Enviar</button>
+        </div>
+        <br>
+      </form>
+      <br>
+      <br>
+    </div>
+    <div class="col-sm-4">
+    </div>
+  </div>
+  <p-progressBar mode="indeterminate" *ngIf="progressBar" [style]="{'height': '6px'}"></p-progressBar>
+  <div class="row" *ngIf="showGraph">
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+      <p-chart type="line" [data]="data" [options]="basicOptions"></p-chart>
+      <br>
+      <br>
+    </div>
+    <div class="col-sm-2">
+    </div>
+  </div>
+  <p-dialog header="Matriculados en pregrado" [(visible)]="displayBasic" [style]="{width: '50vw'}">
+    <p>{{ dialogMessage }}</p>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="displayBasic=false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+
+</div>
+

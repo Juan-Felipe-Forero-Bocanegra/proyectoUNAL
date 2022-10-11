@@ -1,0 +1,96 @@
+
+<div class="container-fluid">
+  <br>
+  <div class="row">
+    <app-menu-principal></app-menu-principal>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-3">
+
+    </div>
+    <div class="col-sm-6">
+      <h1>
+        Graduados en Pregrado
+      </h1>
+    </div>
+    <div class="col-sm-3">
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+
+
+
+    </div>
+    <div class="col-sm-4">
+
+      <form action="" [formGroup]="formulario" (ngSubmit)="onSubmit()">
+        <br>
+        <br>
+        <label>Facultad</label>
+        <br>
+        <p-dropdown [options]="facultadArray" optionLabel="label" name="FACULTAD" formControlName="FACULTAD"
+          placeholder="Selecciona la facultad" [style]="{'minWidth':'100%'}" (onChange)="facultadSelect($event)">
+        </p-dropdown>
+        <br>
+        <br>
+
+
+        <label>Programa</label>
+        <br>
+        <p-dropdown [options]="programaArray" optionLabel="label" name="PROGRAMA" formControlName="PROGRAMA"
+          placeholder="Selecciona el programa " [style]="{'minWidth':'100%'}"></p-dropdown>
+        <br>
+        <br>
+
+
+        <hr />
+        <br>
+        <div class="text-center">
+          <button class="btn btn-primary" pButton pRipple label="Guardar" type="submit"
+            [disabled]="!formulario.valid">Enviar</button>
+        </div>
+
+        <br>
+
+
+      </form>
+
+      <br>
+      <br>
+
+    </div>
+    <div class="col-sm-4">
+
+    </div>
+  </div>
+
+  <p-progressBar mode="indeterminate" *ngIf="progressBar" [style]="{'height': '6px'}"></p-progressBar>
+
+
+  <div class="row" *ngIf="showGraph">
+    <div class="col-sm-2">
+
+    </div>
+    <div class="col-sm-8">
+      <p-chart type="line" [data]="data" [options]="basicOptions"></p-chart>
+      <br>
+      <br>
+    </div>
+    <div class="col-sm-2">
+
+    </div>
+  </div>
+
+  <p-dialog header="Matriculados en pregrado" [(visible)]="displayBasic" [style]="{width: '50vw'}">
+    <p>{{ dialogMessage }}</p>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="displayBasic=false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+
+</div>
+
