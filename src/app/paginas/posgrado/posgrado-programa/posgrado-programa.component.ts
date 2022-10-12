@@ -579,7 +579,13 @@ export class PosgradoProgramaComponent implements OnInit {
             this.data.labels.push(element.PERIODO);
             this.data.datasets[1].data.push(element.Label);
           } else {
-            this.data.datasets[0].data.push(element.Label);
+            const index = this.data.labels.findIndex((object: any) => {
+              let string = object.toString();
+              return string === element.PERIODO;
+            });
+            if(index != -1){
+              this.data.datasets[0].data[index] = element.Label
+            }
           }
 
         });

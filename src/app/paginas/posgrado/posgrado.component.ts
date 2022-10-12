@@ -562,6 +562,7 @@ export class PosgradoComponent implements OnInit {
 
     this.data.labels = []
     this.data.datasets[0].data = []
+    this.data.datasets[1].data = []
     this.progressBar = true;
     this.showGraph = false;
 
@@ -590,13 +591,18 @@ export class PosgradoComponent implements OnInit {
 
         responseData.forEach((element: any) => {
 
-          console.log(element);
+          //console.log(element);
           if(element.True == false){
             this.data.labels.push(element.PERIODO);
             this.data.datasets[1].data.push(element.Label[0]);
           } else {
-
-            this.data.datasets[0].data.push(element.Label);
+            const index = this.data.labels.findIndex((object: any) => {
+              let string = object.toString();
+              return string === element.PERIODO;
+            });
+            if(index != -1){
+              this.data.datasets[0].data[index] = element.Label
+            }
           }
 
         });

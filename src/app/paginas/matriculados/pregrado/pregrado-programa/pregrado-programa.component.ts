@@ -290,16 +290,9 @@ export class PregradoProgramaComponent implements OnInit {
   onSubmit() {
 
 
-
-    this.data.labels.splice(0)
-    this.data.datasets[0].data.splice(0)
-    this.data.datasets[1].data.splice(0)
-
-    console.log("Label")
-    console.log(this.data.datasets[1].data)
-
-    console.log("True")
-    console.log(this.data.datasets[0].data)
+    this.data.labels = []
+    this.data.datasets[0].data = []
+    this.data.datasets[1].data = []
 
     this.progressBar = true;
     this.showGraph = false;
@@ -313,16 +306,23 @@ export class PregradoProgramaComponent implements OnInit {
     this.pregradoMatriculadosService.matriculados_pregrado_programa(this.matriculadoPregrado).subscribe(
       responseData => {
 
-       // console.log(responseData)
+       console.log(responseData)
 
         responseData.forEach((element: any) => {
 
           //console.log(element);
-
+          if(element.True == false){
             this.data.labels.push(element.PERIODO);
             this.data.datasets[1].data.push(element.Label);
-            this.data.datasets[0].data.push(element.CantidadMatriculados);
-
+          } else {
+            const index = this.data.labels.findIndex((object: any) => {
+              let string = object.toString();
+              return string === element.PERIODO;
+            });
+            if(index != -1){
+              this.data.datasets[0].data[index] = element.Label
+            }
+          }
 
         });
         this.showGraph = true;

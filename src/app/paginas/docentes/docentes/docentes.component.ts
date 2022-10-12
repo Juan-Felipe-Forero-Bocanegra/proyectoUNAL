@@ -48,10 +48,17 @@ export class DocentesComponent implements OnInit {
       labels: [],
       datasets: [
         {
-          label: 'Cantidad de docentes',
+          label: 'verdaderos',
           data: [],
           fill: false,
           borderColor: '#42A5F5',
+          tension: .4
+        },
+        {
+          label: 'predichos',
+          data: [],
+          fill: false,
+          borderColor: '#e51a4c',
           tension: .4
         }
       ]
@@ -282,6 +289,7 @@ export class DocentesComponent implements OnInit {
 
     this.data.labels = []
     this.data.datasets[0].data = []
+    this.data.datasets[1].data = []
     this.progressBar = true;
     this.showGraph = false;
 
@@ -308,8 +316,19 @@ export class DocentesComponent implements OnInit {
 
           //console.log(element);
 
-          this.data.labels.push(element.YEAR);
-          this.data.datasets[0].data.push(element.Label);
+
+          if(element.True == false){
+            this.data.labels.push(element.YEAR);
+            this.data.datasets[1].data.push(element.Label[0]);
+          } else {
+            const index = this.data.labels.findIndex((object: any) => {
+              let year = +element.YEAR
+              return object == year;
+            });
+            if(index != -1){
+              this.data.datasets[0].data[index] = element.Label
+            }
+          }
 
         });
         this.showGraph = true;
