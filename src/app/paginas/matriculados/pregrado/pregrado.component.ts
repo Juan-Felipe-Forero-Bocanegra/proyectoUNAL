@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { MatriculadoPregrado } from 'src/app/modelos/matriculadosPregrado';
 import { PregradoMatriculadosServiceService } from 'src/app/servicios/matriculados/pregrado-matriculados-service.service';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-pregrado',
@@ -44,6 +45,7 @@ export class PregradoComponent implements OnInit {
   displayBasic: boolean = false;
   dialogMessage: string = '';
   progressBar: boolean = false;
+  ListaExcel: any[]
 
   constructor(private fb: FormBuilder, private pregradoMatriculadosService: PregradoMatriculadosServiceService) {
 
@@ -203,6 +205,8 @@ export class PregradoComponent implements OnInit {
 
   }
 
+
+
   ngOnInit(): void {
   }
 
@@ -299,6 +303,32 @@ export class PregradoComponent implements OnInit {
       ]
     }
   }
+
+  exportExcel(){
+    import('xlsx').then((xlsx) => {
+      const worksheet = xlsx.utils.json_to_sheet(this.ListaExcel);
+      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+      this.saveAsExcelFile(excelBuffer, 'Predicciones matriculados pregrado');
+    });
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE =
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE,
+    });
+    FileSaver.saveAs(
+      data,
+      fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
+    );
+  }
+
   onSubmit() {
 
     this.data.labels = []
@@ -330,6 +360,7 @@ export class PregradoComponent implements OnInit {
       responseData => {
 
         console.log(responseData)
+        this.ListaExcel = responseData;
 
         responseData.forEach((element: any) => {
 
@@ -337,7 +368,7 @@ export class PregradoComponent implements OnInit {
 
           if(element.True == false){
             this.data.labels.push(element.PERIODO);
-            this.data.datasets[1].data.push(element.Label[0]);
+            this.data.datasets[1].data.push(element.Label);
           } else {
             const index = this.data.labels.findIndex((object: any) => {
               let string = object.toString();

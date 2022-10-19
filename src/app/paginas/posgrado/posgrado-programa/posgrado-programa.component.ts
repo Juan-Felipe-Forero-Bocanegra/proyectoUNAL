@@ -7,6 +7,8 @@ import {
 } from '@angular/forms';
 import { MatriculadoPosgrado } from 'src/app/modelos/matriculadoPosgrado';
 import { PosgradoMatriculadosService } from 'src/app/servicios/matriculados/posgrado-matriculados.service';
+import * as FileSaver from 'file-saver';
+import * as xlsx from 'xlsx';
 
 @Component({
   selector: 'app-posgrado-programa',
@@ -41,7 +43,7 @@ export class PosgradoProgramaComponent implements OnInit {
   displayBasic: boolean = false;
   dialogMessage: string = '';
   progressBar: boolean = false;
-
+  ListaExcel: any[]
 
   constructor(private fb: FormBuilder, private posgradoMatriculadoService: PosgradoMatriculadosService) {
 
@@ -49,14 +51,14 @@ export class PosgradoProgramaComponent implements OnInit {
       labels: [],
       datasets: [
         {
-          label: 'verdaderos',
+          label: 'Reales',
           data: [],
           fill: false,
           borderColor: '#42A5F5',
           tension: .4
         },
         {
-          label: 'predichos',
+          label: 'Predichos',
           data: [],
           fill: false,
           borderColor: '#e51a4c',
@@ -550,6 +552,31 @@ export class PosgradoProgramaComponent implements OnInit {
 
   }
 
+  exportExcel(){
+    import('xlsx').then((xlsx) => {
+      const worksheet = xlsx.utils.json_to_sheet(this.ListaExcel);
+      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+      this.saveAsExcelFile(excelBuffer, 'Predicciones matriculados posgrado');
+    });
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE =
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE,
+    });
+    FileSaver.saveAs(
+      data,
+      fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
+    );
+  }
+
 
   onSubmit() {
 
@@ -571,6 +598,7 @@ export class PosgradoProgramaComponent implements OnInit {
       responseData => {
 
         console.log(responseData)
+        this.ListaExcel = responseData;
 
         responseData.forEach((element: any) => {
 

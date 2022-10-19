@@ -25,6 +25,7 @@ import { DocentesComponent } from './paginas/docentes/docentes/docentes.componen
 import { DocentesProgramaComponent } from './paginas/docentes/docentes-programa/docentes-programa.component';
 import { AdminComponent } from './paginas/admin/admin/admin.component';
 import { AdminNivelComponent } from './paginas/admin/admin-nivel/admin-nivel.component';
+import {TabViewModule} from 'primeng/tabview';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { AdminNivelComponent } from './paginas/admin/admin-nivel/admin-nivel.com
     HttpClientModule,
     ChartModule,
     ProgressBarModule,
-    DialogModule
+    DialogModule,
+    TabViewModule
 
   ],
   providers: [],

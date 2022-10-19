@@ -7,6 +7,8 @@ import {
 } from '@angular/forms';
 import { MatriculadoPregrado } from 'src/app/modelos/matriculadosPregrado';
 import { PregradoMatriculadosServiceService } from 'src/app/servicios/matriculados/pregrado-matriculados-service.service';
+import * as FileSaver from 'file-saver';
+import * as xlsx from 'xlsx';
 
 @Component({
   selector: 'app-pregrado-programa',
@@ -32,6 +34,7 @@ export class PregradoProgramaComponent implements OnInit {
   peamaArray: Array<any> = new Array();
   pbmArray: Array<any> = new Array();
   edadArray: Array<any> = new Array();
+  ListaExcel: any[]
 
   matriculadoPregrado: MatriculadoPregrado;
 
@@ -51,14 +54,14 @@ export class PregradoProgramaComponent implements OnInit {
       labels: [],
       datasets: [
         {
-          label: 'verdaderos',
+          label: 'Reales',
           data: [],
           fill: false,
           borderColor: '#42A5F5',
           tension: .4
         },
         {
-          label: 'predichos',
+          label: 'Predichos',
           data: [],
           fill: false,
           borderColor: '#e51a4c',
@@ -66,8 +69,6 @@ export class PregradoProgramaComponent implements OnInit {
         }
       ]
     }
-
-    console.log(this.data.datasets[0].label)
 
     this.matriculadoPregrado = new MatriculadoPregrado();
 
@@ -287,6 +288,35 @@ export class PregradoProgramaComponent implements OnInit {
       ]
     }
   }
+
+
+
+  exportExcel(){
+    import('xlsx').then((xlsx) => {
+      const worksheet = xlsx.utils.json_to_sheet(this.ListaExcel);
+      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+      this.saveAsExcelFile(excelBuffer, 'Predicciones matriculados pregrado');
+    });
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE =
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE,
+    });
+    FileSaver.saveAs(
+      data,
+      fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
+    );
+  }
+
+
   onSubmit() {
 
 
@@ -307,6 +337,7 @@ export class PregradoProgramaComponent implements OnInit {
       responseData => {
 
        console.log(responseData)
+       this.ListaExcel = responseData;
 
         responseData.forEach((element: any) => {
 
@@ -325,6 +356,7 @@ export class PregradoProgramaComponent implements OnInit {
           }
 
         });
+
         this.showGraph = true;
         this.progressBar = false;
       }, (error: any) => {

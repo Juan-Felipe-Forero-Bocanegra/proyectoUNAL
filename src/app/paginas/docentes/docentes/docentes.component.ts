@@ -9,6 +9,8 @@ import { GraduadosPregrado } from 'src/app/modelos/graduadosPregrado';
 import { GraduadosPregradoService } from 'src/app/servicios/graduados/graduados-pregrado.service';
 import { Docente } from 'src/app/modelos/docentes';
 import { DocentesService } from 'src/app/servicios/docentes/docentes.service';
+import * as xlsx from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-docentes',
@@ -41,6 +43,7 @@ export class DocentesComponent implements OnInit {
   displayBasic: boolean = false;
   dialogMessage: string = '';
   progressBar: boolean = false;
+  ListaExcel: any[]
 
   constructor(private fb: FormBuilder, private docentesService: DocentesService) {
 
@@ -48,14 +51,14 @@ export class DocentesComponent implements OnInit {
       labels: [],
       datasets: [
         {
-          label: 'verdaderos',
+          label: 'Reales',
           data: [],
           fill: false,
           borderColor: '#42A5F5',
           tension: .4
         },
         {
-          label: 'predichos',
+          label: 'Predichos',
           data: [],
           fill: false,
           borderColor: '#e51a4c',
@@ -285,6 +288,32 @@ export class DocentesComponent implements OnInit {
       ]
     }
   }
+
+  exportExcel(){
+    import('xlsx').then((xlsx) => {
+      const worksheet = xlsx.utils.json_to_sheet(this.ListaExcel);
+      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+      this.saveAsExcelFile(excelBuffer, 'Predicciones docentes');
+    });
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE =
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE,
+    });
+    FileSaver.saveAs(
+      data,
+      fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
+    );
+  }
+
   onSubmit() {
 
     this.data.labels = []
@@ -311,6 +340,7 @@ export class DocentesComponent implements OnInit {
       responseData => {
 
         console.log(responseData)
+        this.ListaExcel = responseData;
 
         responseData.forEach((element: any) => {
 
@@ -319,7 +349,7 @@ export class DocentesComponent implements OnInit {
 
           if(element.True == false){
             this.data.labels.push(element.YEAR);
-            this.data.datasets[1].data.push(element.Label[0]);
+            this.data.datasets[1].data.push(element.Label);
           } else {
             const index = this.data.labels.findIndex((object: any) => {
               let year = +element.YEAR

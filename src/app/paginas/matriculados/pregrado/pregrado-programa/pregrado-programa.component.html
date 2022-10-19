@@ -75,7 +75,39 @@
     <div class="col-sm-8">
       <p-chart type="line" [data]="data" [options]="basicOptions"></p-chart>
       <br>
-      <br>
+      <p-tabView>
+        <p-tabPanel header="Mejor modelo">
+          <div class="text-center">
+           <img src="../../../../../assets/matriculados/Pregrado/BestModel.png" alt="">
+           </div>
+        </p-tabPanel>
+        <p-tabPanel header="Curva de aprendizaje">
+          <div class="text-center">
+            <img src="../../../../../assets/matriculados/Pregrado/Learning Curve.png" alt="">
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Error de predicción">
+          <div class="text-center">
+            <img src="../../../../../assets/matriculados/Pregrado/Prediction Error.png" alt="">
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Residuales">
+          <div class="text-center">
+            <img src="../../../../../assets/matriculados/Pregrado/Residuals.png" alt="">
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Curva de validación">
+          <div class="text-center">
+            <img src="../../../../../assets/matriculados/Pregrado/Validation Curve.png" alt="">
+          </div>
+        </p-tabPanel>
+
+    </p-tabView>
+    <br>
+    <div class="text-center">
+    <button type="button" class="btn btn-primary"  icon="pi pi-file-excel" (click)="exportExcel()"  pTooltip="XLS" tooltipPosition="bottom">Exportar datos</button>
+    </div>
+    <br>
     </div>
     <div class="col-sm-2">
 

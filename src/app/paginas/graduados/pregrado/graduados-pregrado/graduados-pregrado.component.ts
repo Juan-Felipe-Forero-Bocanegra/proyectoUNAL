@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { GraduadosPregrado } from 'src/app/modelos/graduadosPregrado';
 import { GraduadosPregradoService } from 'src/app/servicios/graduados/graduados-pregrado.service';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-graduados-pregrado',
@@ -40,6 +41,7 @@ export class GraduadosPregradoComponent implements OnInit {
   displayBasic: boolean = false;
   dialogMessage: string = '';
   progressBar: boolean = false;
+  ListaExcel: any[]
 
   constructor(private fb: FormBuilder, private graduadosPregradoService: GraduadosPregradoService) {
 
@@ -47,14 +49,14 @@ export class GraduadosPregradoComponent implements OnInit {
       labels: [],
       datasets: [
         {
-          label: 'Cantidad de graduados',
+          label: 'Reales',
           data: [],
           fill: false,
           borderColor: '#42A5F5',
           tension: .4
         },
         {
-          label: 'predichos',
+          label: 'Predichos',
           data: [],
           fill: false,
           borderColor: '#e51a4c',
@@ -260,6 +262,30 @@ export class GraduadosPregradoComponent implements OnInit {
       ]
     }
   }
+  exportExcel(){
+    import('xlsx').then((xlsx) => {
+      const worksheet = xlsx.utils.json_to_sheet(this.ListaExcel);
+      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+      this.saveAsExcelFile(excelBuffer, 'Predicciones graduados pregrado');
+    });
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE =
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE,
+    });
+    FileSaver.saveAs(
+      data,
+      fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
+    );
+  }
   onSubmit() {
 
     this.data.labels = []
@@ -287,13 +313,14 @@ export class GraduadosPregradoComponent implements OnInit {
       responseData => {
 
         console.log(responseData)
+        this.ListaExcel = responseData;
 
         responseData.forEach((element: any) => {
 
           //console.log(element);
           if(element.True == false){
             this.data.labels.push(element.PERIODO);
-            this.data.datasets[1].data.push(element.Label[0]);
+            this.data.datasets[1].data.push(element.Label);
           } else {
             const index = this.data.labels.findIndex((object: any) => {
               let string = object.toString();

@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { MatriculadoPosgrado } from 'src/app/modelos/matriculadoPosgrado';
 import { PosgradoMatriculadosService } from 'src/app/servicios/matriculados/posgrado-matriculados.service';
-
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-posgrado',
@@ -42,7 +42,7 @@ export class PosgradoComponent implements OnInit {
   showGraph: boolean = false;
 
   progressBar: boolean = false;
-
+  ListaExcel: any[]
 
   constructor(private fb: FormBuilder, private posgradoMatriculadoService: PosgradoMatriculadosService) {
 
@@ -50,14 +50,14 @@ export class PosgradoComponent implements OnInit {
       labels: [],
       datasets: [
         {
-          label: 'verdaderos',
+          label: 'Reales',
           data: [],
           fill: false,
           borderColor: '#42A5F5',
           tension: .4
         },
         {
-          label: 'predichos',
+          label: 'Predichos',
           data: [],
           fill: false,
           borderColor: '#e51a4c',
@@ -556,6 +556,31 @@ export class PosgradoComponent implements OnInit {
 
   }
 
+  exportExcel(){
+    import('xlsx').then((xlsx) => {
+      const worksheet = xlsx.utils.json_to_sheet(this.ListaExcel);
+      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+      this.saveAsExcelFile(excelBuffer, 'Predicciones matriculados posgrado');
+    });
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE =
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE,
+    });
+    FileSaver.saveAs(
+      data,
+      fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
+    );
+  }
+
 
 
   onSubmit() {
@@ -585,7 +610,7 @@ export class PosgradoComponent implements OnInit {
 
         console.log("Response")
         console.log(responseData)
-
+        this.ListaExcel = responseData;
         this.data.labels.splice(0, this.data.labels.length);
         this.data.datasets[0].data.splice(0, this.data.datasets[0].data.length);
 
@@ -594,7 +619,7 @@ export class PosgradoComponent implements OnInit {
           //console.log(element);
           if(element.True == false){
             this.data.labels.push(element.PERIODO);
-            this.data.datasets[1].data.push(element.Label[0]);
+            this.data.datasets[1].data.push(element.Label);
           } else {
             const index = this.data.labels.findIndex((object: any) => {
               let string = object.toString();
